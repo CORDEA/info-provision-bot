@@ -3,6 +3,8 @@ package client
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import java.io.Closeable
 
@@ -17,6 +19,10 @@ class TwitterClient(token: String) : Closeable {
         defaultRequest {
             host = HOST
             header("Authorization", "Bearer $token")
+        }
+
+        install(JsonFeature) {
+            serializer = KotlinxSerializer()
         }
     }
 

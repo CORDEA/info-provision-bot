@@ -1,7 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.21"
+    val kotlinVersion = "1.4.30"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.serialization") version kotlinVersion
     application
 }
 
@@ -23,6 +25,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-serialization:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
 }
 
