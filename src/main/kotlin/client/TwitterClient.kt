@@ -1,12 +1,15 @@
 package client
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -50,6 +53,18 @@ class TwitterClient(token: String) : Closeable {
                 json.decodeFromString<StreamRulesResponse.Success>(response)
             }.getOrElse { json.decodeFromString<StreamRulesResponse.Error>(response) }
         )
+    }
+
+    fun getTweets() = flow<Tweet> {
+        client.get<HttpStatement> {
+            url { encodedPath = STREAM }
+        }.execute { response ->
+            val channel = response.receive<ByteReadChannel>()
+            do {
+                val line = channel.readUTF8Line() ?: break
+                emit(json.decodeFromString(line))
+            } while (line.isNotBlank())
+        }
     }
 
     override fun close() {
