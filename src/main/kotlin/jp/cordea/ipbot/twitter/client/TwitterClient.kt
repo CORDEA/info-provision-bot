@@ -1,4 +1,4 @@
-package client
+package jp.cordea.ipbot.twitter.client
 
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -11,7 +11,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json

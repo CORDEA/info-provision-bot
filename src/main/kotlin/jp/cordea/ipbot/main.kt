@@ -1,3 +1,5 @@
+package jp.cordea.ipbot
+
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 

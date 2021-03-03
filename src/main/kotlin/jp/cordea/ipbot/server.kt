@@ -1,5 +1,7 @@
+package jp.cordea.ipbot
+
 import io.ktor.application.*
-import twitter.observeTweets
+import jp.cordea.ipbot.twitter.observeTweets
 
 fun Application.main() {
     observeTweets()

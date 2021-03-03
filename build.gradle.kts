@@ -37,5 +37,5 @@ tasks.withType<KotlinCompile>() {
 }
 
 application {
-    mainClassName = "ServerKt"
+    mainClass.set("jp.cordea.ipbot.MainKt")
 }

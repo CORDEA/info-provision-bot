@@ -1,4 +1,4 @@
-package client
+package jp.cordea.ipbot.twitter.client
 
 import kotlinx.serialization.Serializable
 

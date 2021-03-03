@@ -5,7 +5,7 @@ ktor {
     }
 
     application {
-        modules = [ServerKt.main]
+        modules = [jp.cordea.ipbot.ServerKt.main]
     }
 }
 

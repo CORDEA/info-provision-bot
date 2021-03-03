@@ -1,8 +1,8 @@
-package twitter
+package jp.cordea.ipbot.twitter
 
-import client.StreamRuleRequest
-import client.TwitterClient
 import io.ktor.application.*
+import jp.cordea.ipbot.twitter.client.StreamRuleRequest
+import jp.cordea.ipbot.twitter.client.TwitterClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
