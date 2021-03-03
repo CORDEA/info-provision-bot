@@ -10,10 +10,13 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.Closeable
+import kotlin.math.pow
 
 class TwitterClient(token: String) : Closeable {
     private companion object {
@@ -55,16 +58,25 @@ class TwitterClient(token: String) : Closeable {
         )
     }
 
-    fun getTweets() = flow<Tweet> {
-        client.get<HttpStatement> {
-            url { encodedPath = STREAM }
-        }.execute { response ->
-            val channel = response.receive<ByteReadChannel>()
-            do {
-                val line = channel.readUTF8Line() ?: break
-                emit(json.decodeFromString(line))
-            } while (line.isNotBlank())
-        }
+    fun getTweets(maxAttempts: Int) = flow<Tweet> {
+        var attempts = 1
+        do {
+            runCatching {
+                client.get<HttpStatement> {
+                    url { encodedPath = STREAM }
+                }.execute { response ->
+                    val channel = response.receive<ByteReadChannel>()
+                    do {
+                        val line = channel.readUTF8Line() ?: break
+                        emit(json.decodeFromString(line))
+                    } while (line.isNotBlank())
+                    attempts = 1
+                }
+            }.onFailure {
+                delay((10f * 2f.pow(attempts)).toLong())
+                attempts += 1
+            }
+        } while (attempts <= maxAttempts)
     }
 
     override fun close() {
