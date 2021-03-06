@@ -26,6 +26,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+    implementation("net.devrieze:xmlutil-serialization-jvm:0.81.1")
 }
 
 tasks.test {
