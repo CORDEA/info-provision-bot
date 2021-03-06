@@ -27,6 +27,9 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
     implementation("net.devrieze:xmlutil-serialization-jvm:0.81.1")
+    implementation("org.jetbrains.exposed:exposed-core:0.29.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.29.1")
+    implementation("org.xerial:sqlite-jdbc:3.34.0")
 }
 
 tasks.test {
