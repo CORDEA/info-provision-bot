@@ -11,36 +11,36 @@ class DbClient(url: String) {
         transaction {
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.create(RssFeeds)
+            SchemaUtils.create(Feeds)
         }
     }
 
     private val digest = MessageDigest.getInstance("SHA-256")
 
-    fun insertRss(url: String) {
+    fun insertFeed(url: String) {
         transaction {
             addLogger(StdOutSqlLogger)
 
-            RssFeeds.insertIgnore {
+            Feeds.insertIgnore {
                 it[id] = calculateId(url)
                 it[latestContentId] = ""
             }
         }
     }
 
-    fun insertLatestRssContentId(url: String, guid: String) {
+    fun insertLatestFeedContentId(url: String, guid: String) {
         transaction {
             addLogger(StdOutSqlLogger)
 
-            RssFeeds.update({ RssFeeds.id eq calculateId(url) }) {
+            Feeds.update({ Feeds.id eq calculateId(url) }) {
                 it[latestContentId] = calculateId(guid)
             }
         }
     }
 
-    fun findLatestRssContentId(url: String) =
+    fun findLatestFeedContentId(url: String) =
         transaction {
-            RssFeeds.select { RssFeeds.id eq url }.single()[RssFeeds.latestContentId]
+            Feeds.select { Feeds.id eq url }.single()[Feeds.latestContentId]
         }
 
     private fun calculateId(value: String) =
