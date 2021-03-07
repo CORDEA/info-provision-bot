@@ -15,9 +15,7 @@ class RssClient {
         }
     }
 
-    fun getRss(urls: List<String>) = flow<RssResponse> {
-        urls.forEach {
-            emit(client.get(it))
-        }
+    fun getRss(url: String) = flow<RssResponse> {
+        emit(client.get(url))
     }
 }
