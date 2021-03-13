@@ -9,11 +9,15 @@ class GetNewRssContentsUseCase(
     private val rssClient: RssClient,
     private val dbClient: DbClient
 ) {
+    private companion object {
+        const val ITEMS_MAX = 5
+    }
+
     fun execute(url: String) =
         rssClient.getRss(url)
             .map { response ->
                 val id = dbClient.findLatestFeedContentId(url)
-                response.channel.item.takeWhile { it.guid == id }
+                response.channel.item.takeWhile { it.guid == id }.take(ITEMS_MAX)
             }
             .onEach {
                 it.firstOrNull()?.let { response ->

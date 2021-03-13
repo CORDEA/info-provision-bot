@@ -17,7 +17,8 @@ fun Application.main() {
     val lineClient = initializeLineClient()
     val getNewRssContentsUseCase = GetNewRssContentsUseCase(rssClient, dbClient)
     val registerFeedUseCase = RegisterFeedUseCase(dbClient)
+    val postBroadcastMessageUseCase = PostBroadcastMessageUseCase(lineClient)
 
     observeTweets()
-    observeRss(registerFeedUseCase, getNewRssContentsUseCase)
+    observeRss(registerFeedUseCase, getNewRssContentsUseCase, postBroadcastMessageUseCase)
 }

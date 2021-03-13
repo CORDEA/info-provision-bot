@@ -1,8 +1,12 @@
 package jp.cordea.ipbot.rss
 
 import io.ktor.application.*
+import io.ktor.http.*
 import jp.cordea.ipbot.GetNewRssContentsUseCase
+import jp.cordea.ipbot.PostBroadcastMessageUseCase
 import jp.cordea.ipbot.RegisterFeedUseCase
+import jp.cordea.ipbot.line.client.TextMessage
+import jp.cordea.ipbot.rss.client.RssItemResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -13,7 +17,8 @@ import kotlin.time.ExperimentalTime
 @ExperimentalCoroutinesApi
 fun Application.observeRss(
     registerFeedUseCase: RegisterFeedUseCase,
-    getNewRssContentsUseCase: GetNewRssContentsUseCase
+    getNewRssContentsUseCase: GetNewRssContentsUseCase,
+    postBroadcastMessageUseCase: PostBroadcastMessageUseCase
 ) {
     val interval = environment.config.property("rss.interval").getString().toLong()
     val urls = environment.config.property("rss.urls").getList()
@@ -29,9 +34,12 @@ fun Application.observeRss(
                 emitAll(getNewRssContentsUseCase.execute(it))
             }
         }
+        .map { list -> format(list).map { TextMessage(it) } }
+        .flatMapLatest { postBroadcastMessageUseCase.execute(it) }
         .flowOn(Dispatchers.IO)
-        .onEach {
-            // TODO
-        }
         .launchIn(this)
 }
+
+private fun format(items: List<RssItemResponse>) = items.map { format(it) }
+
+private fun format(item: RssItemResponse) = item.title + "\n" + item.link
