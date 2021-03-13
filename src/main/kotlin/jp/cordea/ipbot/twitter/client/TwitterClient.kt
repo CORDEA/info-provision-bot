@@ -38,7 +38,7 @@ class TwitterClient(token: String) : Closeable {
             contentType(ContentType.Application.Json)
         }
 
-        install(JsonFeature) {
+        Json {
             serializer = KotlinxSerializer(json)
         }
     }
