@@ -1,17 +1,31 @@
 package jp.cordea.ipbot
 
 import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.routing.*
+import io.ktor.serialization.*
 import jp.cordea.ipbot.db.initializeDb
 import jp.cordea.ipbot.line.initializeLineClient
+import jp.cordea.ipbot.line.server.lineApi
 import jp.cordea.ipbot.rss.client.RssClient
 import jp.cordea.ipbot.rss.observeRss
 import jp.cordea.ipbot.twitter.observeTweets
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.json.Json
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 @ExperimentalCoroutinesApi
 fun Application.main() {
+    install(ContentNegotiation) {
+        json(Json {
+            ignoreUnknownKeys = true
+        })
+    }
+    routing {
+        lineApi()
+    }
+
     val rssClient = RssClient()
     val dbClient = initializeDb()
     val lineClient = initializeLineClient()
