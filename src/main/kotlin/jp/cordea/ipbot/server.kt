@@ -12,6 +12,10 @@ import jp.cordea.ipbot.rss.observeRss
 import jp.cordea.ipbot.twitter.observeTweets
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.json.Json
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.ktor.di
+import org.kodein.di.singleton
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -22,11 +26,14 @@ fun Application.main() {
             ignoreUnknownKeys = true
         })
     }
+    di {
+        bind<RssClient>() with singleton { RssClient() }
+    }
     routing {
         lineApi()
     }
 
-    val rssClient = RssClient()
+    val rssClient by di().instance<RssClient>()
     val dbClient = initializeDb()
     val lineClient = initializeLineClient()
     val getNewRssContentsUseCase = GetNewRssContentsUseCase(rssClient, dbClient)
