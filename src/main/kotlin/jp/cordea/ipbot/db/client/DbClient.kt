@@ -1,12 +1,13 @@
 package jp.cordea.ipbot.db.client
 
+import jp.cordea.ipbot.AppConfig
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.security.MessageDigest
 
-class DbClient(url: String) {
+class DbClient(config: AppConfig) {
     init {
-        Database.connect(url, "org.sqlite.JDBC")
+        Database.connect(config.db.url, "org.sqlite.JDBC")
 
         transaction {
             addLogger(StdOutSqlLogger)

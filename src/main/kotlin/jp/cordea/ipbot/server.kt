@@ -4,8 +4,8 @@ import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
-import jp.cordea.ipbot.db.initializeDb
-import jp.cordea.ipbot.line.initializeLineClient
+import jp.cordea.ipbot.db.client.DbClient
+import jp.cordea.ipbot.line.client.LineClient
 import jp.cordea.ipbot.line.server.lineApi
 import jp.cordea.ipbot.rss.client.RssClient
 import jp.cordea.ipbot.rss.observeRss
@@ -29,18 +29,22 @@ fun Application.main() {
     }
     di {
         bind<AppConfig>() with provider { AppConfig(this@main.environment.config) }
+
         bind<RssClient>() with singleton { RssClient() }
+        bind<LineClient>() with singleton { LineClient(instance()) }
+        bind<DbClient>() with singleton { DbClient(instance()) }
+
+        bind<GetNewRssContentsUseCase>() with provider { GetNewRssContentsUseCase(instance(), instance()) }
+        bind<RegisterFeedUseCase>() with provider { RegisterFeedUseCase(instance()) }
+        bind<PostBroadcastMessageUseCase>() with provider { PostBroadcastMessageUseCase(instance()) }
     }
     routing {
         lineApi()
     }
 
-    val rssClient by di().instance<RssClient>()
-    val dbClient = initializeDb()
-    val lineClient = initializeLineClient()
-    val getNewRssContentsUseCase = GetNewRssContentsUseCase(rssClient, dbClient)
-    val registerFeedUseCase = RegisterFeedUseCase(dbClient)
-    val postBroadcastMessageUseCase = PostBroadcastMessageUseCase(lineClient)
+    val getNewRssContentsUseCase by di().instance<GetNewRssContentsUseCase>()
+    val registerFeedUseCase by di().instance<RegisterFeedUseCase>()
+    val postBroadcastMessageUseCase by di().instance<PostBroadcastMessageUseCase>()
 
     observeTweets(postBroadcastMessageUseCase)
     observeRss(registerFeedUseCase, getNewRssContentsUseCase, postBroadcastMessageUseCase)

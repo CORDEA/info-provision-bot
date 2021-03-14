@@ -8,8 +8,9 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import jp.cordea.ipbot.AppConfig
 
-class LineClient(token: String) {
+class LineClient(config: AppConfig) {
     private companion object {
         const val HOST = "api.line.me"
         const val BROADCAST_MESSAGE = "v2/bot/message/broadcast"
@@ -21,7 +22,7 @@ class LineClient(token: String) {
                 protocol = URLProtocol.HTTPS
                 host = HOST
             }
-            header("Authorization", "Bearer $token")
+            header("Authorization", "Bearer ${config.line.token}")
             contentType(ContentType.Application.Json)
         }
 
