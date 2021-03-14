@@ -15,6 +15,7 @@ import kotlinx.serialization.json.Json
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.ktor.di
+import org.kodein.di.provider
 import org.kodein.di.singleton
 import kotlin.time.ExperimentalTime
 
@@ -27,6 +28,7 @@ fun Application.main() {
         })
     }
     di {
+        bind<AppConfig>() with provider { AppConfig(this@main.environment.config) }
         bind<RssClient>() with singleton { RssClient() }
     }
     routing {
