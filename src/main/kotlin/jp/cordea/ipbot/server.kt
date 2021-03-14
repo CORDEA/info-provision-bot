@@ -9,7 +9,8 @@ import jp.cordea.ipbot.line.client.LineClient
 import jp.cordea.ipbot.line.server.lineApi
 import jp.cordea.ipbot.rss.client.RssClient
 import jp.cordea.ipbot.rss.observeRss
-import jp.cordea.ipbot.twitter.observeTweets
+import jp.cordea.ipbot.twitter.TweetObserver
+import jp.cordea.ipbot.twitter.client.TwitterClient
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.json.Json
 import org.kodein.di.bind
@@ -30,6 +31,7 @@ fun Application.main() {
     di {
         bind<AppConfig>() with provider { AppConfig(this@main.environment.config) }
 
+        bind<TwitterClient>() with singleton { TwitterClient(instance()) }
         bind<RssClient>() with singleton { RssClient() }
         bind<LineClient>() with singleton { LineClient(instance()) }
         bind<DbClient>() with singleton { DbClient(instance()) }
@@ -37,6 +39,8 @@ fun Application.main() {
         bind<GetNewRssContentsUseCase>() with provider { GetNewRssContentsUseCase(instance(), instance()) }
         bind<RegisterFeedUseCase>() with provider { RegisterFeedUseCase(instance()) }
         bind<PostBroadcastMessageUseCase>() with provider { PostBroadcastMessageUseCase(instance()) }
+
+        bind<TweetObserver>() with provider { TweetObserver(instance(), instance()) }
     }
     routing {
         lineApi()
@@ -46,6 +50,7 @@ fun Application.main() {
     val registerFeedUseCase by di().instance<RegisterFeedUseCase>()
     val postBroadcastMessageUseCase by di().instance<PostBroadcastMessageUseCase>()
 
-    observeTweets(postBroadcastMessageUseCase)
+    val tweetObserver by di().instance<TweetObserver>()
+    tweetObserver.observe()
     observeRss(registerFeedUseCase, getNewRssContentsUseCase, postBroadcastMessageUseCase)
 }

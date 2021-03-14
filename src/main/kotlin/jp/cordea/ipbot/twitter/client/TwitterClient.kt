@@ -10,6 +10,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
+import jp.cordea.ipbot.AppConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.decodeFromString
@@ -17,7 +18,7 @@ import kotlinx.serialization.json.Json
 import java.io.Closeable
 import kotlin.math.pow
 
-class TwitterClient(token: String) : Closeable {
+class TwitterClient(config: AppConfig) : Closeable {
     private companion object {
         const val HOST = "api.twitter.com"
         const val STREAM_RULES = "2/tweets/search/stream/rules"
@@ -34,7 +35,7 @@ class TwitterClient(token: String) : Closeable {
                 protocol = URLProtocol.HTTPS
                 host = HOST
             }
-            header("Authorization", "Bearer $token")
+            header("Authorization", "Bearer ${config.twitter.token}")
             contentType(ContentType.Application.Json)
         }
 
