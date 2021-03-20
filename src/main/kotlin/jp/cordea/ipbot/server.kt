@@ -54,13 +54,11 @@ fun Application.main() {
                 instance(),
                 instance(),
                 instance(),
-                instance(),
                 instance()
             )
         }
         bind<RssObserver>() with provider {
             RssObserver(
-                instance(),
                 instance(),
                 instance(),
                 instance(),

@@ -2,6 +2,7 @@ package jp.cordea.ipbot.rss
 
 import io.ktor.application.*
 import jp.cordea.ipbot.AppConfig
+import jp.cordea.ipbot.line.client.Message
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.rss.client.RssItemResponse
 import jp.cordea.ipbot.usecase.GetAuthenticatedUsersUseCase
@@ -18,8 +19,7 @@ class RssObserver(
     application: Application,
     private val registerFeedUseCase: RegisterFeedUseCase,
     private val sendPushMessagesUseCase: SendPushMessagesUseCase,
-    private val getNewRssContentsUseCase: GetNewRssContentsUseCase,
-    private val getAuthenticatedUsersUseCase: GetAuthenticatedUsersUseCase
+    private val getNewRssContentsUseCase: GetNewRssContentsUseCase
 ) : CoroutineScope, Closeable {
     private val job = SupervisorJob(application.coroutineContext[Job])
 
@@ -42,6 +42,11 @@ class RssObserver(
             }
             .map { list -> format(list).map { TextMessage(it) } }
             .flatMapLatest { sendPushMessagesUseCase.execute(it) }
+            .catch {
+                sendPushMessagesUseCase.execute(
+                    listOf(TextMessage(it.localizedMessage))
+                )
+            }
             .flowOn(Dispatchers.IO)
             .launchIn(this)
     }
