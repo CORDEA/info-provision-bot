@@ -11,12 +11,10 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import jp.cordea.ipbot.AppConfig
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.Closeable
-import kotlin.math.pow
 
 class TwitterClient(config: AppConfig) : Closeable {
     private companion object {
@@ -44,39 +42,28 @@ class TwitterClient(config: AppConfig) : Closeable {
         }
     }
 
-    fun postStreamRules(rules: List<StreamRuleRequest>) = flow {
+    suspend fun postStreamRules(rules: List<StreamRuleRequest>): StreamRulesResponse {
         val response = client.post<String> {
             url {
                 encodedPath = STREAM_RULES
             }
             body = StreamRulesRequest(rules)
         }
-        emit(
-            runCatching {
-                json.decodeFromString<StreamRulesResponse.Success>(response)
-            }.getOrElse { json.decodeFromString<StreamRulesResponse.Error>(response) }
-        )
+        return runCatching {
+            json.decodeFromString<StreamRulesResponse.Success>(response)
+        }.getOrElse { json.decodeFromString<StreamRulesResponse.Error>(response) }
     }
 
-    fun getTweets(maxAttempts: Int) = flow<Tweet> {
-        var attempts = 1
-        do {
-            runCatching {
-                client.get<HttpStatement> {
-                    url { encodedPath = STREAM }
-                }.execute { response ->
-                    val channel = response.receive<ByteReadChannel>()
-                    do {
-                        val line = channel.readUTF8Line() ?: break
-                        emit(json.decodeFromString(line))
-                    } while (line.isNotBlank())
-                    attempts = 1
-                }
-            }.onFailure {
-                delay((10f * 2f.pow(attempts)).toLong())
-                attempts += 1
-            }
-        } while (attempts <= maxAttempts)
+    fun getTweets() = flow<Tweet> {
+        client.get<HttpStatement> {
+            url { encodedPath = STREAM }
+        }.execute { response ->
+            val channel = response.receive<ByteReadChannel>()
+            do {
+                val line = channel.readUTF8Line() ?: break
+                emit(json.decodeFromString(line))
+            } while (line.isNotBlank())
+        }
     }
 
     override fun close() {

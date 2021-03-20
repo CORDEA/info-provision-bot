@@ -24,21 +24,21 @@ class TweetObserver(
 
     @ExperimentalCoroutinesApi
     fun observe() {
-        client
-            .postStreamRules(config.twitter.rules.map { StreamRuleRequest(it) })
-            .flowOn(Dispatchers.IO)
-            .launchIn(this)
-
-        client.getTweets(maxAttempts = 10)
-            .map { TextMessage(it.data.text) }
-            .flatMapLatest { sendPushMessagesUseCase.execute(listOf(it)) }
-            .catch {
-                sendPushMessagesUseCase.execute(
-                    listOf(TextMessage(it.localizedMessage))
-                )
-            }
-            .flowOn(Dispatchers.IO)
-            .launchIn(this)
+//        client
+//            .postStreamRules(config.twitter.rules.map { StreamRuleRequest(it) })
+//            .flowOn(Dispatchers.IO)
+//            .launchIn(this)
+//
+//        client.getTweets(maxAttempts = 10)
+//            .map { TextMessage(it.data.text) }
+//            .flatMapLatest { sendPushMessagesUseCase.execute(listOf(it)) }
+//            .catch {
+//                sendPushMessagesUseCase.execute(
+//                    listOf(TextMessage(it.localizedMessage))
+//                )
+//            }
+//            .flowOn(Dispatchers.IO)
+//            .launchIn(this)
     }
 
     override fun close() {
