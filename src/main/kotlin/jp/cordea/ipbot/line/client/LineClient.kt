@@ -14,6 +14,7 @@ class LineClient(config: AppConfig) {
     private companion object {
         const val HOST = "api.line.me"
         const val BROADCAST_MESSAGE = "v2/bot/message/broadcast"
+        const val PUSH_MESSAGE = "v2/bot/message/push"
     }
 
     private val client = HttpClient(CIO) {
@@ -34,6 +35,13 @@ class LineClient(config: AppConfig) {
     suspend fun postBroadcastMessage(message: BroadcastMessage) {
         client.post<HttpResponse> {
             url { encodedPath = BROADCAST_MESSAGE }
+            body = message
+        }
+    }
+
+    suspend fun postPushMessage(message: PushMessage) {
+        client.post<HttpResponse> {
+            url { encodedPath = PUSH_MESSAGE }
             body = message
         }
     }
