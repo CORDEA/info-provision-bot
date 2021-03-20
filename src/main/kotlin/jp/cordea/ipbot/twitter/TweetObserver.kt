@@ -6,9 +6,12 @@ import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.twitter.client.StreamRuleRequest
 import jp.cordea.ipbot.twitter.client.TwitterClient
 import jp.cordea.ipbot.usecase.GetAuthenticatedUsersUseCase
-import jp.cordea.ipbot.usecase.SendPushMessageUseCase
+import jp.cordea.ipbot.usecase.SendPushMessagesUseCase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import java.io.Closeable
 import kotlin.coroutines.CoroutineContext
 
@@ -16,7 +19,7 @@ class TweetObserver(
     application: Application,
     private val config: AppConfig,
     private val client: TwitterClient,
-    private val sendPushMessageUseCase: SendPushMessageUseCase,
+    private val sendPushMessagesUseCase: SendPushMessagesUseCase,
     private val getAuthenticatedUsersUseCase: GetAuthenticatedUsersUseCase
 ) : CoroutineScope, Closeable {
     private val job = SupervisorJob(application.coroutineContext[Job])
@@ -32,14 +35,7 @@ class TweetObserver(
 
         client.getTweets(maxAttempts = 10)
             .map { TextMessage(it.data.text) }
-            .flatMapLatest { message ->
-                getAuthenticatedUsersUseCase.execute()
-                    .asFlow()
-                    .filter { it.observing }
-                    .flatMapLatest {
-                        sendPushMessageUseCase.execute(it.id, listOf(message))
-                    }
-            }
+            .flatMapLatest { sendPushMessagesUseCase.execute(listOf(it)) }
             .flowOn(Dispatchers.IO)
             .launchIn(this)
     }

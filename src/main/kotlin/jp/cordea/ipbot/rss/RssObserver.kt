@@ -7,7 +7,7 @@ import jp.cordea.ipbot.rss.client.RssItemResponse
 import jp.cordea.ipbot.usecase.GetAuthenticatedUsersUseCase
 import jp.cordea.ipbot.usecase.GetNewRssContentsUseCase
 import jp.cordea.ipbot.usecase.RegisterFeedUseCase
-import jp.cordea.ipbot.usecase.SendPushMessageUseCase
+import jp.cordea.ipbot.usecase.SendPushMessagesUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.Closeable
@@ -17,7 +17,7 @@ class RssObserver(
     private val config: AppConfig,
     application: Application,
     private val registerFeedUseCase: RegisterFeedUseCase,
-    private val sendPushMessageUseCase: SendPushMessageUseCase,
+    private val sendPushMessagesUseCase: SendPushMessagesUseCase,
     private val getNewRssContentsUseCase: GetNewRssContentsUseCase,
     private val getAuthenticatedUsersUseCase: GetAuthenticatedUsersUseCase
 ) : CoroutineScope, Closeable {
@@ -41,12 +41,7 @@ class RssObserver(
                 }
             }
             .map { list -> format(list).map { TextMessage(it) } }
-            .flatMapLatest { messages ->
-                getAuthenticatedUsersUseCase.execute()
-                    .asFlow()
-                    .filter { it.observing }
-                    .flatMapLatest { sendPushMessageUseCase.execute(it.id, messages) }
-            }
+            .flatMapLatest { sendPushMessagesUseCase.execute(it) }
             .flowOn(Dispatchers.IO)
             .launchIn(this)
     }
