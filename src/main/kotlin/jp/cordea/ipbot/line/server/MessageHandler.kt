@@ -1,15 +1,18 @@
 package jp.cordea.ipbot.line.server
 
-import jp.cordea.ipbot.*
+import jp.cordea.ipbot.AppConfig
+import jp.cordea.ipbot.Runner
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.usecase.AddAuthenticatedUserUseCase
+import jp.cordea.ipbot.usecase.IsAuthenticatedUserExistsUseCase
 import jp.cordea.ipbot.usecase.IsAuthenticatedUserUseCase
 
 class MessageHandler(
     private val runner: Runner,
     private val appConfig: AppConfig,
     private val isAuthenticatedUserUseCase: IsAuthenticatedUserUseCase,
-    private val addAuthenticatedUserUseCase: AddAuthenticatedUserUseCase
+    private val addAuthenticatedUserUseCase: AddAuthenticatedUserUseCase,
+    private val isAuthenticatedUserExistsUseCase: IsAuthenticatedUserExistsUseCase
 ) {
     fun handle(event: Event) {
         when (event) {
@@ -46,7 +49,9 @@ class MessageHandler(
     }
 
     private fun resume() {
-        runner.resume()
+        if (isAuthenticatedUserExistsUseCase.execute()) {
+            runner.resume()
+        }
     }
 
     private fun ping() {
