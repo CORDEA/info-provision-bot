@@ -30,6 +30,7 @@ class RssObserver(
         val urls = config.rss.urls
         registerFeedUseCase.execute(urls)
         flow {
+            emit(Unit)
             while (true) {
                 emit(delay(config.rss.interval))
             }
