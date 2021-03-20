@@ -8,17 +8,21 @@ import kotlinx.serialization.Serializable
 sealed class Event
 
 @Serializable
-@SerialName("user")
-class UserEvent(val userId: String)
-
-@Serializable
-@SerialName("group")
-class GroupEvent(val groupId: String, val userId: String?)
-
-@Serializable
-@SerialName("room")
-class RoomEvent(val roomId: String, val userId: String?)
-
-@Serializable
 @SerialName("message")
-class MessageEvent(val replyToken: String, val message: Message)
+class MessageEvent(val replyToken: String, val message: Message, val source: Source) : Event()
+
+@Serializable
+@SerialName("follow")
+class FollowEvent(val replyToken: String, val source: Source) : Event()
+
+@Serializable
+@SerialName("unfollow")
+class UnfollowEvent(val replyToken: String, val source: Source) : Event()
+
+@Serializable
+@SerialName("join")
+class JoinEvent(val replyToken: String, val source: Source) : Event()
+
+@Serializable
+@SerialName("leave")
+class LeaveEvent(val replyToken: String, val source: Source) : Event()
