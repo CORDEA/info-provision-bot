@@ -1,10 +1,9 @@
 package jp.cordea.ipbot.rss
 
 import io.ktor.application.*
-import io.ktor.http.*
-import jp.cordea.ipbot.GetNewRssContentsUseCase
-import jp.cordea.ipbot.PostBroadcastMessageUseCase
-import jp.cordea.ipbot.RegisterFeedUseCase
+import jp.cordea.ipbot.usecase.GetNewRssContentsUseCase
+import jp.cordea.ipbot.usecase.PostBroadcastMessageUseCase
+import jp.cordea.ipbot.usecase.RegisterFeedUseCase
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.rss.client.RssItemResponse
 import kotlinx.coroutines.Dispatchers

@@ -4,6 +4,10 @@ import io.ktor.application.*
 import jp.cordea.ipbot.*
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.rss.client.RssItemResponse
+import jp.cordea.ipbot.usecase.GetAuthenticatedUsersUseCase
+import jp.cordea.ipbot.usecase.GetNewRssContentsUseCase
+import jp.cordea.ipbot.usecase.RegisterFeedUseCase
+import jp.cordea.ipbot.usecase.SendPushMessageUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.Closeable

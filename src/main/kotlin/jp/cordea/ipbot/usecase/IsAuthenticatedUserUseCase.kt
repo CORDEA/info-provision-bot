@@ -1,4 +1,4 @@
-package jp.cordea.ipbot
+package jp.cordea.ipbot.usecase
 
 import jp.cordea.ipbot.db.client.AuthenticatedUserRepository
 

@@ -1,4 +1,4 @@
-package jp.cordea.ipbot
+package jp.cordea.ipbot.usecase
 
 import jp.cordea.ipbot.line.client.LineClient
 import jp.cordea.ipbot.line.client.Message

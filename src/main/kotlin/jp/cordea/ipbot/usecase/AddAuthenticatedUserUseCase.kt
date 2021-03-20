@@ -1,9 +1,9 @@
-package jp.cordea.ipbot
+package jp.cordea.ipbot.usecase
 
 import jp.cordea.ipbot.db.client.AuthenticatedUserRepository
 
-class GetAuthenticatedUsersUseCase(
+class AddAuthenticatedUserUseCase(
     private val repository: AuthenticatedUserRepository
 ) {
-    fun execute() = repository.findAll()
+    fun execute(id: String) = repository.insert(id)
 }

@@ -9,9 +9,11 @@ import jp.cordea.ipbot.line.client.LineClient
 import jp.cordea.ipbot.line.server.lineApi
 import jp.cordea.ipbot.rss.RssObserver
 import jp.cordea.ipbot.rss.client.RssClient
-import jp.cordea.ipbot.rss.observeRss
 import jp.cordea.ipbot.twitter.TweetObserver
 import jp.cordea.ipbot.twitter.client.TwitterClient
+import jp.cordea.ipbot.usecase.GetNewRssContentsUseCase
+import jp.cordea.ipbot.usecase.PostBroadcastMessageUseCase
+import jp.cordea.ipbot.usecase.RegisterFeedUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.json.Json
 import org.kodein.di.bind

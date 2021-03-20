@@ -2,8 +2,8 @@ package jp.cordea.ipbot.twitter
 
 import io.ktor.application.*
 import jp.cordea.ipbot.AppConfig
-import jp.cordea.ipbot.GetAuthenticatedUsersUseCase
-import jp.cordea.ipbot.SendPushMessageUseCase
+import jp.cordea.ipbot.usecase.GetAuthenticatedUsersUseCase
+import jp.cordea.ipbot.usecase.SendPushMessageUseCase
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.twitter.client.StreamRuleRequest
 import jp.cordea.ipbot.twitter.client.TwitterClient

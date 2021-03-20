@@ -2,6 +2,8 @@ package jp.cordea.ipbot.line.server
 
 import jp.cordea.ipbot.*
 import jp.cordea.ipbot.line.client.TextMessage
+import jp.cordea.ipbot.usecase.AddAuthenticatedUserUseCase
+import jp.cordea.ipbot.usecase.IsAuthenticatedUserUseCase
 
 class MessageHandler(
     private val runner: Runner,
