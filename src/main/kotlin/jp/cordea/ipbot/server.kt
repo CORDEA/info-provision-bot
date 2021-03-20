@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
+import jp.cordea.ipbot.db.client.AuthenticatedUserRepository
 import jp.cordea.ipbot.db.client.DbClient
 import jp.cordea.ipbot.line.client.LineClient
 import jp.cordea.ipbot.line.server.lineApi
@@ -11,9 +12,7 @@ import jp.cordea.ipbot.rss.RssObserver
 import jp.cordea.ipbot.rss.client.RssClient
 import jp.cordea.ipbot.twitter.TweetObserver
 import jp.cordea.ipbot.twitter.client.TwitterClient
-import jp.cordea.ipbot.usecase.GetNewRssContentsUseCase
-import jp.cordea.ipbot.usecase.PostBroadcastMessageUseCase
-import jp.cordea.ipbot.usecase.RegisterFeedUseCase
+import jp.cordea.ipbot.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.json.Json
 import org.kodein.di.bind
@@ -39,11 +38,26 @@ fun Application.main() {
         bind<LineClient>() with singleton { LineClient(instance()) }
         bind<DbClient>() with singleton { DbClient(instance()) }
 
+        bind<AuthenticatedUserRepository>() with singleton { AuthenticatedUserRepository() }
+
         bind<GetNewRssContentsUseCase>() with provider { GetNewRssContentsUseCase(instance(), instance()) }
         bind<RegisterFeedUseCase>() with provider { RegisterFeedUseCase(instance()) }
         bind<PostBroadcastMessageUseCase>() with provider { PostBroadcastMessageUseCase(instance()) }
+        bind<SendPushMessageUseCase>() with provider { SendPushMessageUseCase(instance()) }
+        bind<GetAuthenticatedUsersUseCase>() with provider { GetAuthenticatedUsersUseCase(instance()) }
+        bind<AddAuthenticatedUserUseCase>() with provider { AddAuthenticatedUserUseCase(instance()) }
+        bind<IsAuthenticatedUserUseCase>() with provider { IsAuthenticatedUserUseCase(instance()) }
+        bind<IsAuthenticatedUserExistsUseCase>() with provider { IsAuthenticatedUserExistsUseCase(instance()) }
 
-        bind<TweetObserver>() with provider { TweetObserver(instance(), instance()) }
+        bind<TweetObserver>() with provider {
+            TweetObserver(
+                instance(),
+                instance(),
+                instance(),
+                instance(),
+                instance()
+            )
+        }
         bind<RssObserver>() with provider {
             RssObserver(
                 instance(),
