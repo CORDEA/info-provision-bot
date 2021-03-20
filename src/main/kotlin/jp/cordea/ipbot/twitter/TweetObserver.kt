@@ -2,23 +2,22 @@ package jp.cordea.ipbot.twitter
 
 import io.ktor.application.*
 import jp.cordea.ipbot.AppConfig
-import jp.cordea.ipbot.PostBroadcastMessageUseCase
+import jp.cordea.ipbot.GetAuthenticatedUsersUseCase
+import jp.cordea.ipbot.SendPushMessageUseCase
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.twitter.client.StreamRuleRequest
 import jp.cordea.ipbot.twitter.client.TwitterClient
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import org.kodein.di.instance
-import org.kodein.di.ktor.di
+import kotlinx.coroutines.flow.*
 import java.io.Closeable
 import kotlin.coroutines.CoroutineContext
 
 class TweetObserver(
-    private val application: Application,
-    private val config: AppConfig
+    application: Application,
+    private val config: AppConfig,
+    private val client: TwitterClient,
+    private val sendPushMessageUseCase: SendPushMessageUseCase,
+    private val getAuthenticatedUsersUseCase: GetAuthenticatedUsersUseCase
 ) : CoroutineScope, Closeable {
     private val job = SupervisorJob(application.coroutineContext[Job])
 
@@ -26,17 +25,20 @@ class TweetObserver(
 
     @ExperimentalCoroutinesApi
     fun observe() {
-        val client by application.di().instance<TwitterClient>()
-        val postBroadcastMessageUseCase by application.di().instance<PostBroadcastMessageUseCase>()
-
-        val rules = client
+        client
             .postStreamRules(config.twitter.rules.map { StreamRuleRequest(it) })
             .flowOn(Dispatchers.IO)
             .launchIn(this)
 
         client.getTweets(maxAttempts = 10)
             .map { TextMessage(it.data.text) }
-            .flatMapLatest { postBroadcastMessageUseCase.execute(listOf(it)) }
+            .flatMapLatest { message ->
+                getAuthenticatedUsersUseCase.execute()
+                    .asFlow()
+                    .flatMapLatest {
+                        sendPushMessageUseCase.execute(it, listOf(message))
+                    }
+            }
             .flowOn(Dispatchers.IO)
             .launchIn(this)
     }
