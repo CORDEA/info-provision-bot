@@ -42,6 +42,6 @@ class TweetObserver(
     }
 
     override fun close() {
-        job.cancel()
+        job.cancelChildren()
     }
 }

@@ -7,6 +7,7 @@ import io.ktor.serialization.*
 import jp.cordea.ipbot.db.client.DbClient
 import jp.cordea.ipbot.line.client.LineClient
 import jp.cordea.ipbot.line.server.lineApi
+import jp.cordea.ipbot.rss.RssObserver
 import jp.cordea.ipbot.rss.client.RssClient
 import jp.cordea.ipbot.rss.observeRss
 import jp.cordea.ipbot.twitter.TweetObserver
@@ -41,16 +42,23 @@ fun Application.main() {
         bind<PostBroadcastMessageUseCase>() with provider { PostBroadcastMessageUseCase(instance()) }
 
         bind<TweetObserver>() with provider { TweetObserver(instance(), instance()) }
+        bind<RssObserver>() with provider {
+            RssObserver(
+                instance(),
+                instance(),
+                instance(),
+                instance(),
+                instance(),
+                instance()
+            )
+        }
+
+        bind<Runner>() with provider { Runner(instance(), instance()) }
     }
     routing {
         lineApi()
     }
 
-    val getNewRssContentsUseCase by di().instance<GetNewRssContentsUseCase>()
-    val registerFeedUseCase by di().instance<RegisterFeedUseCase>()
-    val postBroadcastMessageUseCase by di().instance<PostBroadcastMessageUseCase>()
-
-    val tweetObserver by di().instance<TweetObserver>()
-    tweetObserver.observe()
-    observeRss(registerFeedUseCase, getNewRssContentsUseCase, postBroadcastMessageUseCase)
+    val runner by di().instance<Runner>()
+    runner.resume()
 }

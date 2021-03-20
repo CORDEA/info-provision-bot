@@ -11,7 +11,7 @@ import kotlin.coroutines.CoroutineContext
 
 class RssObserver(
     private val config: AppConfig,
-    private val application: Application,
+    application: Application,
     private val registerFeedUseCase: RegisterFeedUseCase,
     private val sendPushMessageUseCase: SendPushMessageUseCase,
     private val getNewRssContentsUseCase: GetNewRssContentsUseCase,
