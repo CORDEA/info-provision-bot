@@ -42,7 +42,7 @@ class DbClient(config: AppConfig) {
 
     fun findLatestFeedContentId(url: String) =
         transaction {
-            Feeds.select { Feeds.id eq url }.single()[Feeds.latestContentId]
+            Feeds.select { Feeds.id eq url }.singleOrNull()?.get(Feeds.latestContentId)
         }
 
     private fun calculateId(value: String) =

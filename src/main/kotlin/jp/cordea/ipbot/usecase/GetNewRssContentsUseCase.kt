@@ -17,7 +17,11 @@ class GetNewRssContentsUseCase(
         rssClient.getRss(url)
             .map { response ->
                 val id = dbClient.findLatestFeedContentId(url)
-                response.channel.item.takeWhile { it.guid == id }.take(ITEMS_MAX)
+                if (id == null) {
+                    response.channel.item
+                } else {
+                    response.channel.item.takeWhile { it.guid == id }
+                }.take(ITEMS_MAX)
             }
             .onEach {
                 it.firstOrNull()?.let { response ->
