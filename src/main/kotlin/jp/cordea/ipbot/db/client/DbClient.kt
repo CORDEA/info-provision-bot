@@ -13,6 +13,7 @@ class DbClient(config: AppConfig) {
             addLogger(StdOutSqlLogger)
 
             SchemaUtils.create(Feeds)
+            SchemaUtils.create(AuthenticatedUsers)
         }
     }
 
