@@ -47,7 +47,7 @@ fun Application.main() {
         bind<GetAuthenticatedUsersUseCase>() with provider { GetAuthenticatedUsersUseCase(instance()) }
         bind<AddAuthenticatedUserUseCase>() with provider { AddAuthenticatedUserUseCase(instance()) }
         bind<IsAuthenticatedUserUseCase>() with provider { IsAuthenticatedUserUseCase(instance()) }
-        bind<IsAuthenticatedUserExistsUseCase>() with provider { IsAuthenticatedUserExistsUseCase(instance()) }
+        bind<IsObservingUserExistsUseCase>() with provider { IsObservingUserExistsUseCase(instance()) }
 
         bind<TweetObserver>() with provider {
             TweetObserver(

@@ -1,7 +1,7 @@
 package jp.cordea.ipbot.rss
 
 import io.ktor.application.*
-import jp.cordea.ipbot.*
+import jp.cordea.ipbot.AppConfig
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.rss.client.RssItemResponse
 import jp.cordea.ipbot.usecase.GetAuthenticatedUsersUseCase
@@ -44,7 +44,8 @@ class RssObserver(
             .flatMapLatest { messages ->
                 getAuthenticatedUsersUseCase.execute()
                     .asFlow()
-                    .flatMapLatest { sendPushMessageUseCase.execute(it, messages) }
+                    .filter { it.observing }
+                    .flatMapLatest { sendPushMessageUseCase.execute(it.id, messages) }
             }
             .flowOn(Dispatchers.IO)
             .launchIn(this)

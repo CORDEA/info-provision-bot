@@ -5,7 +5,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class AuthenticatedUserRepository {
     fun findAll() = transaction {
-        AuthenticatedUsers.selectAll().asIterable().map { it[AuthenticatedUsers.id] }
+        AuthenticatedUsers.selectAll().asIterable()
+            .map { AuthenticatedUser(it[AuthenticatedUsers.id], it[AuthenticatedUsers.observing]) }
     }
 
     fun insert(id: String, observing: Boolean) {

@@ -2,8 +2,8 @@ package jp.cordea.ipbot.usecase
 
 import jp.cordea.ipbot.db.client.AuthenticatedUserRepository
 
-class IsAuthenticatedUserExistsUseCase(
+class IsObservingUserExistsUseCase(
     private val repository: AuthenticatedUserRepository
 ) {
-    fun execute() = repository.findAll().isNotEmpty()
+    fun execute() = repository.findAll().any { it.observing }
 }
