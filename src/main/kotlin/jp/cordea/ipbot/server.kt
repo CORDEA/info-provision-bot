@@ -11,6 +11,7 @@ import jp.cordea.ipbot.line.server.lineApi
 import jp.cordea.ipbot.rss.RssObserver
 import jp.cordea.ipbot.rss.client.RssClient
 import jp.cordea.ipbot.twitter.TweetObserver
+import jp.cordea.ipbot.twitter.client.TweetRepository
 import jp.cordea.ipbot.twitter.client.TwitterClient
 import jp.cordea.ipbot.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,6 +40,7 @@ fun Application.main() {
         bind<DbClient>() with singleton { DbClient(instance()) }
 
         bind<AuthenticatedUserRepository>() with singleton { AuthenticatedUserRepository() }
+        bind<TweetRepository>() with singleton { TweetRepository(instance()) }
 
         bind<GetNewRssContentsUseCase>() with provider { GetNewRssContentsUseCase(instance(), instance()) }
         bind<RegisterFeedUseCase>() with provider { RegisterFeedUseCase(instance()) }
@@ -48,6 +50,7 @@ fun Application.main() {
         bind<AddAuthenticatedUserUseCase>() with provider { AddAuthenticatedUserUseCase(instance()) }
         bind<IsAuthenticatedUserUseCase>() with provider { IsAuthenticatedUserUseCase(instance()) }
         bind<IsObservingUserExistsUseCase>() with provider { IsObservingUserExistsUseCase(instance()) }
+        bind<GetTweetsUseCase>() with provider { GetTweetsUseCase(instance()) }
 
         bind<TweetObserver>() with provider {
             TweetObserver(
