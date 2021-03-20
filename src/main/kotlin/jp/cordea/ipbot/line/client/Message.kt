@@ -8,6 +8,6 @@ sealed class Message
 
 @Serializable
 @SerialName("text")
-class TextMessage(
+data class TextMessage(
     val text: String
 ) : Message()
