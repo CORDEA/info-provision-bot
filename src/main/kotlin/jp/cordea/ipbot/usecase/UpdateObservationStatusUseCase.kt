@@ -2,8 +2,8 @@ package jp.cordea.ipbot.usecase
 
 import jp.cordea.ipbot.db.client.AuthenticatedUserRepository
 
-class AddAuthenticatedUserUseCase(
+class UpdateObservationStatusUseCase(
     private val repository: AuthenticatedUserRepository
 ) {
-    fun execute(id: String) = repository.insert(id, false)
+    fun execute(id: String, observing: Boolean) = repository.update(id, observing)
 }
