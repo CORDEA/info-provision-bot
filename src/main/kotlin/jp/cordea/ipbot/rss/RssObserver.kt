@@ -25,10 +25,14 @@ class RssObserver(
 
     override val coroutineContext: CoroutineContext = application.coroutineContext + job
 
+    private val urls = config.rss.urls
+
+    fun setUp() {
+        registerFeedUseCase.execute(urls)
+    }
+
     @ExperimentalCoroutinesApi
     fun observe() {
-        val urls = config.rss.urls
-        registerFeedUseCase.execute(urls)
         flow {
             emit(Unit)
             while (true) {

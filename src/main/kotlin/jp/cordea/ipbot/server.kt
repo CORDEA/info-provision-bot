@@ -78,5 +78,6 @@ fun Application.main() {
     }
 
     val runner by di().instance<Runner>()
+    runner.start()
     runner.resume()
 }

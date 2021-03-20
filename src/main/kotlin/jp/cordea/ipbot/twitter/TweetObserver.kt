@@ -22,12 +22,14 @@ class TweetObserver(
 
     override val coroutineContext: CoroutineContext = application.coroutineContext + job
 
-    @ExperimentalCoroutinesApi
-    fun observe() {
+    fun setUp() {
         updateStreamRulesUseCase.execute(config.twitter.rules)
             .flowOn(Dispatchers.IO)
             .launchIn(this)
+    }
 
+    @ExperimentalCoroutinesApi
+    fun observe() {
         getTweetsUseCase.execute()
             .map { TextMessage(it.data.text) }
             .flatMapLatest { sendPushMessagesUseCase.execute(listOf(it)) }

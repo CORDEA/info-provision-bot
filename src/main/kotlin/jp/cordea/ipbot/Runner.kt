@@ -8,6 +8,11 @@ class Runner(
     private val rssObserver: RssObserver,
     private val tweetObserver: TweetObserver
 ) {
+    fun start() {
+        rssObserver.setUp()
+        tweetObserver.setUp()
+    }
+
     @ExperimentalCoroutinesApi
     fun resume() {
         tweetObserver.close()
