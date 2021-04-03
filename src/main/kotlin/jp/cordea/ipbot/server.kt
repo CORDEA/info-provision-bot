@@ -49,7 +49,7 @@ fun Application.main() {
 
         bind<GetNewRssContentsUseCase>() with provider { GetNewRssContentsUseCase(instance(), instance()) }
         bind<RegisterFeedUseCase>() with provider { RegisterFeedUseCase(instance()) }
-        bind<SendPushMessagesUseCase>() with provider { SendPushMessagesUseCase(instance(), instance()) }
+        bind<BroadcastPushMessagesUseCase>() with provider { BroadcastPushMessagesUseCase(instance(), instance()) }
         bind<GetAuthenticatedUsersUseCase>() with provider { GetAuthenticatedUsersUseCase(instance()) }
         bind<AddAuthenticatedUserUseCase>() with provider { AddAuthenticatedUserUseCase(instance()) }
         bind<IsAuthenticatedUserUseCase>() with provider { IsAuthenticatedUserUseCase(instance()) }

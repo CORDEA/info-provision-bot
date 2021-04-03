@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 
-class SendPushMessagesUseCase(
+class BroadcastPushMessagesUseCase(
     private val messageRepository: MessageRepository,
     private val authenticatedUserRepository: AuthenticatedUserRepository
 ) {
