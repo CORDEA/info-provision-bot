@@ -35,6 +35,7 @@ fun Application.main() {
     install(CallLogging) {
         level = Level.INFO
     }
+    install(DefaultHeaders)
     di {
         bind<AppConfig>() with provider { AppConfig(this@main.environment.config) }
 
