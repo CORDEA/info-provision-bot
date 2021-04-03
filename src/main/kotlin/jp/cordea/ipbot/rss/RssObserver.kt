@@ -2,13 +2,11 @@ package jp.cordea.ipbot.rss
 
 import io.ktor.application.*
 import jp.cordea.ipbot.AppConfig
-import jp.cordea.ipbot.line.client.Message
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.rss.client.RssItemResponse
-import jp.cordea.ipbot.usecase.GetAuthenticatedUsersUseCase
 import jp.cordea.ipbot.usecase.GetNewRssContentsUseCase
 import jp.cordea.ipbot.usecase.RegisterFeedUseCase
-import jp.cordea.ipbot.usecase.SendPushMessagesUseCase
+import jp.cordea.ipbot.usecase.BroadcastPushMessagesUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.io.Closeable
@@ -18,8 +16,8 @@ class RssObserver(
     private val config: AppConfig,
     application: Application,
     private val registerFeedUseCase: RegisterFeedUseCase,
-    private val sendPushMessagesUseCase: SendPushMessagesUseCase,
-    private val getNewRssContentsUseCase: GetNewRssContentsUseCase
+    private val getNewRssContentsUseCase: GetNewRssContentsUseCase,
+    private val broadcastPushMessagesUseCase: BroadcastPushMessagesUseCase
 ) : CoroutineScope, Closeable {
     private val job = SupervisorJob(application.coroutineContext[Job])
 
@@ -45,9 +43,9 @@ class RssObserver(
                 }
             }
             .map { list -> format(list).map { TextMessage(it) } }
-            .flatMapLatest { sendPushMessagesUseCase.execute(it) }
+            .flatMapLatest { broadcastPushMessagesUseCase.execute(it) }
             .catch {
-                sendPushMessagesUseCase.execute(
+                broadcastPushMessagesUseCase.execute(
                     listOf(TextMessage(it.localizedMessage))
                 )
             }

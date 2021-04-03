@@ -4,7 +4,7 @@ import io.ktor.application.*
 import jp.cordea.ipbot.AppConfig
 import jp.cordea.ipbot.line.client.TextMessage
 import jp.cordea.ipbot.usecase.GetTweetsUseCase
-import jp.cordea.ipbot.usecase.SendPushMessagesUseCase
+import jp.cordea.ipbot.usecase.BroadcastPushMessagesUseCase
 import jp.cordea.ipbot.usecase.UpdateStreamRulesUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -15,8 +15,8 @@ class TweetObserver(
     application: Application,
     private val config: AppConfig,
     private val getTweetsUseCase: GetTweetsUseCase,
-    private val sendPushMessagesUseCase: SendPushMessagesUseCase,
-    private val updateStreamRulesUseCase: UpdateStreamRulesUseCase
+    private val updateStreamRulesUseCase: UpdateStreamRulesUseCase,
+    private val broadcastPushMessagesUseCase: BroadcastPushMessagesUseCase
 ) : CoroutineScope, Closeable {
     private val job = SupervisorJob(application.coroutineContext[Job])
 
@@ -32,9 +32,9 @@ class TweetObserver(
     fun observe() {
         getTweetsUseCase.execute()
             .map { TextMessage(it.data.text) }
-            .flatMapLatest { sendPushMessagesUseCase.execute(listOf(it)) }
+            .flatMapLatest { broadcastPushMessagesUseCase.execute(listOf(it)) }
             .catch {
-                sendPushMessagesUseCase.execute(
+                broadcastPushMessagesUseCase.execute(
                     listOf(TextMessage(it.localizedMessage))
                 )
             }
