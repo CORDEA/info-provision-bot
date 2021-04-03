@@ -1,5 +1,19 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.google.cloud.tools:appengine-gradle-plugin:1.3.4")
+    }
+}
+
+apply {
+    plugin("war")
+    plugin("com.google.cloud.tools.appengine")
+}
+
 plugins {
     val kotlinVersion = "1.4.30"
     kotlin("jvm") version kotlinVersion
@@ -22,7 +36,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
     val ktorVersion = "1.5.1"
-    implementation("io.ktor:ktor-server-cio:$ktorVersion")
+    implementation("io.ktor:ktor-server-servlet:$ktorVersion")
     implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
@@ -32,6 +46,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:0.29.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.29.1")
     implementation("org.xerial:sqlite-jdbc:3.34.0")
+    implementation("com.google.appengine:appengine:1.9.60")
 }
 
 tasks.test {
@@ -40,8 +55,4 @@ tasks.test {
 
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"
-}
-
-application {
-    mainClass.set("jp.cordea.ipbot.MainKt")
 }
