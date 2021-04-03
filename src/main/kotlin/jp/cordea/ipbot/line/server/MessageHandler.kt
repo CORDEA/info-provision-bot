@@ -3,10 +3,7 @@ package jp.cordea.ipbot.line.server
 import jp.cordea.ipbot.AppConfig
 import jp.cordea.ipbot.Runner
 import jp.cordea.ipbot.line.client.TextMessage
-import jp.cordea.ipbot.usecase.AddAuthenticatedUserUseCase
-import jp.cordea.ipbot.usecase.IsAuthenticatedUserUseCase
-import jp.cordea.ipbot.usecase.IsObservingUserExistsUseCase
-import jp.cordea.ipbot.usecase.UpdateObservationStatusUseCase
+import jp.cordea.ipbot.usecase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 import javax.crypto.Mac
@@ -16,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec
 class MessageHandler(
     private val runner: Runner,
     private val appConfig: AppConfig,
+    private val sendPushMessagesUseCase: SendPushMessagesUseCase,
     private val isAuthenticatedUserUseCase: IsAuthenticatedUserUseCase,
     private val addAuthenticatedUserUseCase: AddAuthenticatedUserUseCase,
     private val isObservingUserExistsUseCase: IsObservingUserExistsUseCase,
@@ -49,7 +47,7 @@ class MessageHandler(
         }
         when (text) {
             "resume" -> resume(id)
-            "ping" -> ping()
+            "ping" -> ping(id)
             "pause" -> pause(id)
         }
     }
@@ -66,8 +64,8 @@ class MessageHandler(
         runner.resume()
     }
 
-    private fun ping() {
-        // TODO
+    private fun ping(id: String) {
+        sendPushMessagesUseCase.execute(id, listOf(TextMessage("pong")))
     }
 
     private fun pause(id: String) {
