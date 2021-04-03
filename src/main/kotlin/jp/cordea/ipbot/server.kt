@@ -21,6 +21,7 @@ import org.kodein.di.instance
 import org.kodein.di.ktor.di
 import org.kodein.di.provider
 import org.kodein.di.singleton
+import org.slf4j.event.Level
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -30,6 +31,9 @@ fun Application.main() {
         json(Json {
             ignoreUnknownKeys = true
         })
+    }
+    install(CallLogging) {
+        level = Level.INFO
     }
     di {
         bind<AppConfig>() with provider { AppConfig(this@main.environment.config) }

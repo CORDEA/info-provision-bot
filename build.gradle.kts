@@ -41,6 +41,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.4.0")
     implementation("net.devrieze:xmlutil-serialization-jvm:0.81.1")
     implementation("org.jetbrains.exposed:exposed-core:0.29.1")
