@@ -8,6 +8,9 @@ import jp.cordea.ipbot.usecase.IsAuthenticatedUserUseCase
 import jp.cordea.ipbot.usecase.IsObservingUserExistsUseCase
 import jp.cordea.ipbot.usecase.UpdateObservationStatusUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.*
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 @ExperimentalCoroutinesApi
 class MessageHandler(
@@ -18,6 +21,12 @@ class MessageHandler(
     private val isObservingUserExistsUseCase: IsObservingUserExistsUseCase,
     private val updateObservationStatusUseCase: UpdateObservationStatusUseCase
 ) {
+    fun verifySignature(signature: String, body: String): Boolean {
+        val key = SecretKeySpec(appConfig.line.secret.toByteArray(), "HmacSHA256")
+        val mac = Mac.getInstance("HmacSHA256").apply { init(key) }
+        return signature == Base64.getEncoder().encodeToString(mac.doFinal(body.toByteArray()))
+    }
+
     fun handle(event: Event) {
         when (event) {
             is MessageEvent -> handleMessageEvent(event)
