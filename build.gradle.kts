@@ -48,6 +48,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.29.1")
     implementation("org.xerial:sqlite-jdbc:3.34.0")
     implementation("com.google.appengine:appengine:1.9.60")
+    implementation(platform("com.google.cloud:libraries-bom:19.1.0"))
+    implementation("com.google.cloud:google-cloud-secretmanager")
 }
 
 tasks.test {

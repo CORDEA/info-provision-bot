@@ -16,11 +16,13 @@ class AppConfig(config: ApplicationConfig) {
         config.property("line.secret").getString(),
         config.property("line.token").getString()
     )
+    val googleCloud = GoogleCloud(config.property("googleCloud.projectId").getString())
     val db = Db(config.property("db.url").getString())
 
     class App(val code: String)
     class Twitter(val token: String, val rules: List<String>)
     class Rss(val interval: Long, val urls: List<String>)
     class Line(val secret: String, val token: String)
+    class GoogleCloud(val projectId: String)
     class Db(val url: String)
 }
