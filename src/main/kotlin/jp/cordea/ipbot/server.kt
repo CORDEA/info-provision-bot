@@ -7,10 +7,14 @@ import io.ktor.serialization.*
 import jp.cordea.ipbot.db.client.AuthenticatedUserRepository
 import jp.cordea.ipbot.db.client.DbClient
 import jp.cordea.ipbot.line.client.LineClient
+import jp.cordea.ipbot.line.client.MessageRepository
 import jp.cordea.ipbot.line.server.lineApi
 import jp.cordea.ipbot.rss.RssObserver
 import jp.cordea.ipbot.rss.client.RssClient
+import jp.cordea.ipbot.secret.SecretClient
+import jp.cordea.ipbot.secret.SecretRepository
 import jp.cordea.ipbot.twitter.TweetObserver
+import jp.cordea.ipbot.twitter.client.StreamRuleRepository
 import jp.cordea.ipbot.twitter.client.TweetRepository
 import jp.cordea.ipbot.twitter.client.TwitterClient
 import jp.cordea.ipbot.usecase.*
@@ -39,14 +43,19 @@ fun Application.main() {
     di {
         bind<AppConfig>() with provider { AppConfig(this@main.environment.config) }
 
-        bind<TwitterClient>() with singleton { TwitterClient(instance()) }
+        bind<SecretClient>() with singleton { SecretClient(instance()) }
+        bind<TwitterClient.Provider>() with singleton { TwitterClient.Provider(instance()) }
+        bind<LineClient.Provider>() with singleton { LineClient.Provider(instance()) }
         bind<RssClient>() with singleton { RssClient() }
-        bind<LineClient>() with singleton { LineClient(instance()) }
         bind<DbClient>() with singleton { DbClient(instance()) }
 
+        bind<SecretRepository>() with singleton { SecretRepository(instance()) }
         bind<AuthenticatedUserRepository>() with singleton { AuthenticatedUserRepository() }
         bind<TweetRepository>() with singleton { TweetRepository(instance()) }
+        bind<MessageRepository>() with singleton { MessageRepository(instance()) }
+        bind<StreamRuleRepository>() with singleton { StreamRuleRepository(instance()) }
 
+        bind<GetSecretUseCase>() with provider { GetSecretUseCase(instance()) }
         bind<GetNewRssContentsUseCase>() with provider { GetNewRssContentsUseCase(instance(), instance()) }
         bind<RegisterFeedUseCase>() with provider { RegisterFeedUseCase(instance()) }
         bind<BroadcastPushMessagesUseCase>() with provider { BroadcastPushMessagesUseCase(instance(), instance()) }
@@ -55,6 +64,7 @@ fun Application.main() {
         bind<IsAuthenticatedUserUseCase>() with provider { IsAuthenticatedUserUseCase(instance()) }
         bind<IsObservingUserExistsUseCase>() with provider { IsObservingUserExistsUseCase(instance()) }
         bind<GetTweetsUseCase>() with provider { GetTweetsUseCase(instance()) }
+        bind<UpdateStreamRulesUseCase>() with provider { UpdateStreamRulesUseCase(instance()) }
 
         bind<TweetObserver>() with provider {
             TweetObserver(
