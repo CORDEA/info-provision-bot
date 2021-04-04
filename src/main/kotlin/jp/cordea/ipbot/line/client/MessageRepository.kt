@@ -1,17 +1,13 @@
 package jp.cordea.ipbot.line.client
 
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flatMapLatest
 
 class MessageRepository(
-    private val client: LineClient
+    private val clientProvider: LineClient.Provider
 ) {
-    fun broadcast(messages: List<Message>) = flow {
-        client.postBroadcastMessage(BroadcastMessage(messages, false))
-        emit(Unit)
-    }
+    fun broadcast(messages: List<Message>) = clientProvider.provide()
+        .flatMapLatest { it.postBroadcastMessage(BroadcastMessage(messages, false)) }
 
-    fun push(targetId: String, messages: List<Message>) = flow {
-        client.postPushMessage(PushMessage(targetId, messages, false))
-        emit(Unit)
-    }
+    fun push(targetId: String, messages: List<Message>) = clientProvider.provide()
+        .flatMapLatest { it.postPushMessage(PushMessage(targetId, messages, false)) }
 }

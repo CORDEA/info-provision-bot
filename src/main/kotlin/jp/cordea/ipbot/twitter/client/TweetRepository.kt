@@ -1,7 +1,9 @@
 package jp.cordea.ipbot.twitter.client
 
+import kotlinx.coroutines.flow.flatMapLatest
+
 class TweetRepository(
-    private val client: TwitterClient
+    private val clientProvider: TwitterClient.Provider
 ) {
-    fun findAll() = client.getTweets()
+    fun findAll() = clientProvider.provide().flatMapLatest { it.getTweets() }
 }
