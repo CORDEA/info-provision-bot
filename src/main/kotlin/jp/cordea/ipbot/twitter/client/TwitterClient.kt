@@ -59,16 +59,18 @@ class TwitterClient private constructor(twitterToken: String) : Closeable {
         }
     }
 
-    suspend fun postStreamRules(rules: List<StreamRuleRequest>): StreamRulesResponse {
+    fun postStreamRules(rules: List<StreamRuleRequest>) = flow {
         val response = client.post<String> {
             url {
                 encodedPath = STREAM_RULES
             }
             body = StreamRulesRequest(rules)
         }
-        return runCatching {
-            json.decodeFromString<StreamRulesResponse.Success>(response)
-        }.getOrElse { json.decodeFromString<StreamRulesResponse.Error>(response) }
+        emit(
+            runCatching {
+                json.decodeFromString<StreamRulesResponse.Success>(response)
+            }.getOrElse { json.decodeFromString<StreamRulesResponse.Error>(response) }
+        )
     }
 
     fun getTweets() = flow<Tweet> {
